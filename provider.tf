@@ -9,11 +9,12 @@ terraform {
 
 variable "do_token" {}
 variable "pvt_key" {}
+variable "do_key_name" {}
 
 provider "digitalocean" {
   token = var.do_token
 }
 
 data "digitalocean_ssh_key" "terraform" {
-  name = "do"
+  name = var.do_key_name
 }
