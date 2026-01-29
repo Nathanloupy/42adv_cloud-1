@@ -1,20 +1,24 @@
 terraform {
   required_providers {
-    digitalocean = {
-      source  = "digitalocean/digitalocean"
-      version = "~> 2.0"
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 6.0"
     }
   }
 }
 
-variable "do_token" {}
-variable "pvt_key" {}
-variable "do_key_name" {}
+variable "access_key" {}
+variable "access_secret_key" {}
+variable "public_ssh_key_filepath" {}
+variable "pvt_ssh_key_filepath" {}
 
-provider "digitalocean" {
-  token = var.do_token
+provider "aws" {
+  region     = "eu-west-3"
+  access_key = var.access_key
+  secret_key = var.access_secret_key
 }
 
-data "digitalocean_ssh_key" "terraform" {
-  name = var.do_key_name
+resource "aws_key_pair" "terraform" {
+  key_name   = "terraform-key"
+  public_key = file(var.public_ssh_key_filepath)
 }

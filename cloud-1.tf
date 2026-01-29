@@ -1,25 +1,8 @@
-resource "digitalocean_droplet" "cloud-1" {
-  image  = "ubuntu-24-04-x64"
-  name   = "cloud-1"
-  region = "fra1"
-  size   = "s-1vcpu-512mb-10gb"
-  ssh_keys = [
-    data.digitalocean_ssh_key.terraform.id
-  ]
+resource "aws_instance" "cloud-1" {
+  ami           = "ami-04df1508c6be5879e"
+  instance_type = "t3.micro"
 
-  connection {
-    host        = self.ipv4_address
-    user        = "root"
-    type        = "ssh"
-    private_key = file(var.pvt_key)
-    timeout     = "2m"
-  }
-
-  provisioner "remote-exec" {
-    inline = [
-      "export PATH=$PATH:/usr/bin",
-      "sudo apt update",
-      "sudo apt install -y nginx"
-    ]
+  tags = {
+    Name = "cloud-1"
   }
 }
