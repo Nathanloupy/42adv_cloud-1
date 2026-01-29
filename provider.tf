@@ -11,6 +11,7 @@ variable "access_key" {}
 variable "access_secret_key" {}
 variable "public_ssh_key_filepath" {}
 variable "pvt_ssh_key_filepath" {}
+variable "allowed_ssh_ip" {}
 
 provider "aws" {
   region     = "eu-west-3"
@@ -21,4 +22,22 @@ provider "aws" {
 resource "aws_key_pair" "terraform" {
   key_name   = "terraform-key"
   public_key = file(var.public_ssh_key_filepath)
+}
+
+resource "aws_security_group" "allow_ssh" {
+  name = "allow_ssh"
+
+  ingress {
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["${var.allowed_ssh_ip}/32"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
 }
