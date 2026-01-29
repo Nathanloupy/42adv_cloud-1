@@ -1,0 +1,10 @@
+plugin: aws_ec2
+aws_access_key: "{{ lookup('pipe', 'terraform output -json aws_access_key') | from_json }}"
+aws_secret_key: "{{ lookup('pipe', 'terraform output -json aws_secret_key') | from_json }}"
+regions:
+  - eu-west-3
+hostnames:
+  - dns-name
+  - private-ip-address
+groups:
+  aws_ec2: true

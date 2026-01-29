@@ -3,10 +3,6 @@ resource "aws_instance" "cloud-1" {
   instance_type          = "t3.micro"
   key_name               = aws_key_pair.terraform.key_name
   vpc_security_group_ids = [aws_security_group.allow_ssh.id]
-
-  tags = {
-    Name = "cloud-1"
-  }
 }
 
 output "ssh_command" {

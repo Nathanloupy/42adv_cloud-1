@@ -41,3 +41,18 @@ resource "aws_security_group" "allow_ssh" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 }
+
+output "aws_access_key" {
+  value     = var.access_key
+  sensitive = true
+}
+
+output "aws_secret_key" {
+  value     = var.access_secret_key
+  sensitive = true
+}
+
+output "pvt_ssh_key_filepath" {
+  value     = var.pvt_ssh_key_filepath
+  sensitive = true
+}
