@@ -1,17 +1,13 @@
-FROM alpine:3.19
+FROM wordpress:apache
 
-RUN apk update \
-    && apk add wget \
-    && apk add curl \
-    && apk add php82 php82-fpm php82-phar php82-mysqli php82-iconv
+# Install WP-CLI for automated setup
+RUN curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar \
+    && chmod +x wp-cli.phar \
+    && mv wp-cli.phar /usr/local/bin/wp
 
-RUN mkdir -p /var/www/wordpress
+# Copy custom entrypoint
+COPY tools/custom-entrypoint.sh /usr/local/bin/custom-entrypoint.sh
+RUN chmod +x /usr/local/bin/custom-entrypoint.sh
 
-COPY conf/php-fpm.conf /etc/php82/php-fpm.conf
-COPY conf/www.conf /etc/php82/php-fpm.d/www.conf
-
-COPY ./tools/config_wordpress.sh /config_wordpress.sh
-
-RUN chmod +x /config_wordpress.sh
-
-CMD [ "/config_wordpress.sh" ]
+ENTRYPOINT ["/usr/local/bin/custom-entrypoint.sh"]
+CMD ["apache2-foreground"]

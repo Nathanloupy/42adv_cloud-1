@@ -7,15 +7,15 @@ services:
     networks:
       - inception
     expose:
-      - "9000"
+      - "80"
     depends_on:
       mariadb:
         condition: service_healthy
     volumes:
-      - wordpress:/var/www/wordpress
+      - wordpress:/var/www/html
     restart: always
     healthcheck:
-      test: ["CMD", "wp" ,"core", "is-installed", "--path=/var/www/wordpress"]
+      test: ["CMD", "wp", "core", "is-installed", "--path=/var/www/html", "--allow-root"]
       interval: 10s
       timeout: 5s
       retries: 10
@@ -30,7 +30,7 @@ services:
     expose:
       - "3306"
     volumes:
-      - mariadb:/var/lib/db_data
+      - mariadb:/var/lib/mysql
     restart: always
     healthcheck:
       test: ["CMD", "mariadb-admin" ,"ping", "-h", "localhost", "-p${MYSQL_ROOT_PASSWORD}"]
@@ -40,21 +40,25 @@ services:
 
   phpmyadmin:
     container_name: phpmyadmin
-    image: phpmyadmin/phpmyadmin:fpm-alpine
+    image: phpmyadmin:apache
     env_file: .env
     environment:
       - PMA_HOST=mariadb
+      - PMA_ABSOLUTE_URI=https://nlederge.42.fr/phpmyadmin/
     networks:
       - inception
     expose:
-      - "9000"
-    volumes:
-      - phpmyadmin:/var/www/html
+      - "80"
     restart: always
     depends_on:
       mariadb:
         condition: service_healthy
-  
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
   nginx:
     container_name: nginx
     build:
@@ -68,16 +72,17 @@ services:
       wordpress:
         condition: service_healthy
       phpmyadmin:
-        condition: service_started
-    volumes:
-      - wordpress:/var/www/wordpress
-      - phpmyadmin:/var/www/phpmyadmin
-    restart: on-failure
+        condition: service_healthy
+    restart: always
+    healthcheck:
+      test: ["CMD", "curl", "-fk", "https://localhost:443"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
 volumes:
   mariadb:
   wordpress:
-  phpmyadmin:
 
 networks:
   inception:
