@@ -41,10 +41,9 @@ services:
   phpmyadmin:
     container_name: phpmyadmin
     image: phpmyadmin:apache
-    env_file: .env
     environment:
       - PMA_HOST=mariadb
-      - PMA_ABSOLUTE_URI=https://nlederge.42.fr/phpmyadmin/
+      - PMA_ABSOLUTE_URI=${PMA_ABSOLUTE_URI}
     networks:
       - inception
     expose:
@@ -63,7 +62,6 @@ services:
     container_name: nginx
     build:
       context: nginx
-    env_file: .env
     networks:
       - inception
     ports:
