@@ -6,4 +6,5 @@
       - mariadb
       - wordpress
       - phpmyadmin
+    build: always
     state: present
