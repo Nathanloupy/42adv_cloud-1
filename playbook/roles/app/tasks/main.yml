@@ -1,0 +1,9 @@
+---
+- name: launch mariadb, wordpress & phpmyadmin
+  community.docker.docker_compose_v2:
+    project_src: /home/{{ ansible_user }}/inception
+    services:
+      - mariadb
+      - wordpress
+      - phpmyadmin
+    state: present

@@ -1,0 +1,7 @@
+---
+- name: launch nginx
+  community.docker.docker_compose_v2:
+    project_src: /home/{{ ansible_user }}/inception
+    services:
+      - nginx
+    state: present

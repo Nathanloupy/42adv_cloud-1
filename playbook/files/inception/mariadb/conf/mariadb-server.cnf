@@ -1,0 +1,16 @@
+#
+# These groups are read by MariaDB server.
+# Use it for options that only the server (but not clients) should see
+
+# this is read by the standalone daemon and embedded servers
+[server]
+
+# this is only for the mysqld standalone daemon
+[mysqld]
+user=mysql
+datadir=/var/lib/mysql
+tmpdir=/tmp
+log-error=/var/log/mariadb/mariadb.log
+socket=/run/mysqld/mysqld.sock
+bind-address=0.0.0.0
+port=3306

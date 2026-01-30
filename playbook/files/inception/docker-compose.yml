@@ -1,0 +1,92 @@
+services:
+  wordpress:
+    container_name: wordpress
+    build:
+      context: wordpress
+    image: wordpress
+    env_file: .env
+    networks:
+      - inception
+    expose:
+      - "9000"
+    depends_on:
+      mariadb:
+        condition: service_healthy
+    volumes:
+      - wordpress:/var/www/wordpress
+    restart: always
+    healthcheck:
+      test: ["CMD", "wp" ,"core", "is-installed", "--path=/var/www/wordpress"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  mariadb:
+    container_name: mariadb
+    build:
+      context: mariadb
+    image: mariadb
+    env_file: .env
+    networks:
+      - inception
+    expose:
+      - "3306"
+    volumes:
+      - mariadb:/var/lib/db_data
+    restart: always
+    healthcheck:
+      test: ["CMD", "mariadb-admin" ,"ping", "-h", "localhost", "-p${MYSQL_ROOT_PASSWORD}"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+
+  phpmyadmin:
+    container_name: phpmyadmin
+    image: phpmyadmin/phpmyadmin:fpm-alpine
+    env_file: .env
+    networks:
+      - inception
+    expose:
+      - "9001"
+    volumes:
+      - phpmyadmin:/var/www/html
+    restart: always
+    depends_on:
+      mariadb:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "pgrep -x php-fpm > /dev/null || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
+  
+  nginx:
+    container_name:
+      nginx
+    build:
+      context: nginx
+    image: nginx
+    env_file: .env
+    networks:
+      - inception
+    ports:
+      - "443:443"
+    depends_on:
+      wordpress:
+        condition: service_healthy
+      phpmyadmin:
+        condition: service_healthy
+    volumes:
+      - wordpress:/var/www/wordpress
+      - phpmyadmin:/var/www/phpmyadmin
+    restart: on-failure
+
+volumes:
+  mariadb:
+  wordpress:
+  phpmyadmin:
+
+networks:
+  inception:
+    name: inception

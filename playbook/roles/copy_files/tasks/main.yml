@@ -1,0 +1,7 @@
+---
+- name: Copy inception files to remote
+  ansible.builtin.copy:
+    src: inception/
+    dest: /home/{{ ansible_user }}/inception/
+    mode: '0644'
+    directory_mode: '0755'

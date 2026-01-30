@@ -1,0 +1,17 @@
+---
+- name: cloud-1
+  hosts: all
+  gather_facts: yes
+  become: yes
+
+  pre_tasks:
+    - name: apt update & upgrade
+      apt:
+        update_cache: yes
+        upgrade: yes
+
+  roles:
+    - docker
+    - copy_files
+    - app
+    - nginx
