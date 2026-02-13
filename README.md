@@ -98,5 +98,5 @@ Internet → AWS Security Group → Nginx (HTTPS:443)
 
 This project is part of my curriculum at 42 School.
 
-- **Date of completion:** Ongoing
-- **Grade:** N/A
+- **Date of completion:** 2026-02-02
+- **Grade:** 100/100
